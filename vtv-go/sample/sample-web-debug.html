@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wiinvent web-ima.js – Debug</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --panel: #1a1d2e;
+      --border: #2d3151;
+      --accent: #5b6af0;
+      --accent2: #20c997;
+      --danger: #ef4444;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 12px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    header span {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      flex: 1;
+      gap: 0;
+      min-height: 0;
+    }
+
+    .video-col {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+    }
+
+    .video-wrap {
+      position: relative;
+      background: #000;
+      aspect-ratio: 16/9;
+      flex: 1;
+    }
+
+    .video-wrap video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    #ads-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #ads-container.active {
+      pointer-events: all;
+    }
+
+    .player-controls {
+      background: #111;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .player-controls input[type=range] {
+      flex: 1;
+      accent-color: var(--accent);
+      height: 4px;
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+      transition: background .15s;
+    }
+
+    .btn:hover {
+      background: #252840;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: #4a59e0;
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .btn.danger:hover {
+      background: #dc2626;
+    }
+
+    #time-display {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 90px;
+      text-align: right;
+    }
+
+    .state-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .state-pill {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: #1a1d2e;
+      border: 1px solid var(--border);
+    }
+
+    .state-pill span {
+      color: var(--muted);
+    }
+
+    .state-pill b {
+      color: var(--text);
+    }
+
+    .state-pill.on b {
+      color: var(--accent2);
+    }
+
+    .state-pill.err b {
+      color: var(--danger);
+    }
+
+    .config-col {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sdk-section {
+      padding: 14px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .sdk-section h2 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 10px;
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .config-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .config-item label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .config-item input, .config-item select {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      padding: 5px 8px;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .config-item input:focus, .config-item select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .config-item.full {
+      grid-column: 1 / -1;
+    }
+
+    .sdk-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    #ad-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, .7);
+      color: #fff;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: none;
+      z-index: 10;
+    }
+
+    #ad-badge.show {
+      display: block;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    footer {
+      padding: 6px 16px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 16px;
+    }
+
+    #sdk-status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-right: 5px;
+    }
+
+    #sdk-status-dot.ready {
+      background: var(--accent2);
+      box-shadow: 0 0 6px var(--accent2);
+    }
+
+    #sdk-status-dot.error {
+      background: var(--danger);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🎯 Wiinvent — web-ima.js Debug</h1>
+  <span style="margin-left:auto">
+            <span id="sdk-status-dot"></span>
+            <span id="sdk-status-text">Init</span>
+        </span>
+</header>
+<div class="workspace">
+  <div class="video-col">
+    <div class="video-wrap">
+      <video id="content-video" preload="metadata">
+        <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
+      </video>
+      <div id="ads-container"></div>
+      <div id="ad-badge"></div>
+    </div>
+    <div class="player-controls">
+      <button class="btn primary" id="btn-play">▶ Play</button>
+      <button class="btn" id="btn-fullscreen">⛶</button>
+      <input type="range" id="progress-bar" value="0" min="0" max="1000" step="1">
+      <span id="time-display">0:00 / 0:00</span>
+    </div>
+    <div class="state-bar">
+      <div class="state-pill"><span>SDK </span><b id="pill-sdk-val">—</b></div>
+      <div class="state-pill"><span>Ad </span><b id="pill-ad-val">—</b></div>
+      <div class="state-pill"><span>Time </span><b id="pill-time-val">0.0s</b></div>
+      <div class="state-pill"><span>Dur </span><b id="pill-dur-val">—</b></div>
+      <div class="state-pill"><span>Breaks </span><b id="pill-breaks-val">0</b></div>
+    </div>
+  </div>
+  <div class="config-col">
+    <div class="sdk-section">
+      <h2>⚙️ Config</h2>
+      <div class="config-grid">
+        <div class="config-item"><label>Env</label><select id="cfg-env">
+          <option value="SANDBOX" selected>SANDBOX</option>
+          <option value="PRODUCTION">PRODUCTION</option>
+        </select></div>
+        <div class="config-item"><label>Platform</label><select id="cfg-platform">
+          <option value="WEB" selected>WEB</option>
+          <option value="TV">TV</option>
+        </select></div>
+        <div class="config-item"><label>Tenant</label><input type="number" id="cfg-tenant" value="14"></div>
+        <div class="config-item"><label>Channel</label><input type="text" id="cfg-channel" value="115376"></div>
+        <div class="config-item"><label>Stream</label><input type="text" id="cfg-stream" value="1243"></div>
+        <div class="config-item"><label>Ad ID</label><input type="text" id="cfg-adid" value="1999"></div>
+        <div class="config-item"><label>Content Type</label><select id="cfg-content-type">
+          <option value="VIDEO" selected>VIDEO</option>
+          <option value="VOD">VOD</option>
+        </select></div>
+        <div class="config-item"><label>Device</label><select id="cfg-device-type">
+          <option value="PC" selected>PC</option>
+          <option value="PHONE">PHONE</option>
+        </select></div>
+        <div class="config-item"><label>Gender</label><select id="cfg-gender">
+          <option value="NONE" selected>NONE</option>
+          <option value="MALE">MALE</option>
+          <option value="FEMALE">FEMALE</option>
+        </select></div>
+        <div class="config-item"><label>Age</label><input type="number" id="cfg-age" value="25"></div>
+        <div class="config-item"><label>Title</label><input type="text" id="cfg-title" value="Debug"></div>
+        <div class="config-item"><label>Trans ID</label><input type="text" id="cfg-transid" value="debug-001"></div>
+        <div class="config-item full"><label>Segments</label><input type="text" id="cfg-segments" value="1,2,3"></div>
+        <div class="config-item full"><label>Video URL</label><input type="text" id="cfg-video-url"
+                                                                     value="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4">
+        </div>
+      </div>
+      <div class="sdk-actions">
+        <button class="btn primary" id="btn-load">🚀 Load SDK</button>
+        <button class="btn danger" id="btn-destroy">🗑 Destroy</button>
+        <button class="btn" id="btn-playadnow">▶ playAd()</button>
+        <button class="btn" id="btn-skip">⏭ skip()</button>
+        <button class="btn" id="btn-seek-mid">⏩ 50%</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <span><span id="sdk-status-dot2"></span> SDK: <span id="footer-sdk">—</span></span>
+  <span>Breaks: <b id="footer-breaks-played">0</b></span>
+</footer>
+<script src="https://ima-sdk-public.pages.dev/vtv-go/1.0.0/web-ima.js"></script>
+<script>
+  'use strict';
+  var wiiSdk = null, adsInitialized = false, isAdPlaying = false, breaksPlayed = 0;
+  var video = document.getElementById('content-video');
+  var adsContainer = document.getElementById('ads-container');
+  var adBadge = document.getElementById('ad-badge');
+  var progressBar = document.getElementById('progress-bar');
+  var timeDisplay = document.getElementById('time-display');
+  var videoContainer = document.querySelector('.video-wrap');
+
+  function setSdkState(s) {
+    document.getElementById('pill-sdk-val').textContent = s;
+    document.getElementById('sdk-status-text').textContent = s;
+    document.getElementById('footer-sdk').textContent = s;
+    var dot = document.getElementById('sdk-status-dot');
+    dot.className = s === 'Ready' ? 'ready' : s === 'Error' ? 'error' : '';
+  }
+
+  function setAdState(s) {
+    document.getElementById('pill-ad-val').textContent = s;
+  }
+
+  function updateTime() {
+    document.getElementById('pill-time-val').textContent = video.currentTime.toFixed(1) + 's';
+    if (!isNaN(video.duration)) document.getElementById('pill-dur-val').textContent = video.duration.toFixed(1) + 's';
+  }
+
+  function formatTime(s) {
+    var m = Math.floor(s / 60), r = Math.floor(s) % 60;
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  // Player
+  document.getElementById('btn-play').addEventListener('click', function () {
+    if (video.paused || video.ended) video.play().catch(function () {
+    });
+    else video.pause();
+  });
+  video.addEventListener('play', function () {
+    document.getElementById('btn-play').textContent = '⏸ Pause';
+    if (!adsInitialized) {
+      initSdk();
+      adsInitialized = true;
+    }
+  });
+  video.addEventListener('pause', function () {
+    document.getElementById('btn-play').textContent = '▶ Play';
+  });
+  video.addEventListener('loadedmetadata', function () {
+    updateTime();
+  });
+  video.addEventListener('timeupdate', function () {
+    if (!isAdPlaying && !isNaN(video.duration) && video.duration > 0) {
+      progressBar.value = (video.currentTime / video.duration) * 1000;
+      updateTime();
+      timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+    }
+    if (wiiSdk && typeof wiiSdk.updateTime === 'function' && !video.paused && !isAdPlaying) {
+      wiiSdk.updateTime(video.currentTime, video.duration);
+    }
+  });
+  progressBar.addEventListener('input', function () {
+    if (isAdPlaying || isNaN(video.duration)) return;
+    video.currentTime = (progressBar.value / 1000) * video.duration;
+  });
+
+  // Fullscreen
+  function isFS() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  document.getElementById('btn-fullscreen').addEventListener('click', function () {
+    if (!isFS()) {
+      var fn = videoContainer.requestFullscreen || videoContainer.webkitRequestFullscreen;
+      if (fn) fn.call(videoContainer);
+    } else {
+      var ex = document.exitFullscreen || document.webkitExitFullscreen;
+      if (ex) ex.call(document);
+    }
+  });
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (e) {
+    document.addEventListener(e, function () {
+      document.getElementById('btn-fullscreen').textContent = isFS() ? '✕ Exit' : '⛶';
+    });
+  });
+
+  // SDK
+  function buildConfig() {
+    return {
+      domId: 'ads-container', liveTv: false,
+      env: document.getElementById('cfg-env').value,
+      flatform: document.getElementById('cfg-platform').value,
+      tenantId: parseInt(document.getElementById('cfg-tenant').value, 10),
+      channelId: document.getElementById('cfg-channel').value,
+      streamId: document.getElementById('cfg-stream').value,
+      adId: document.getElementById('cfg-adid').value,
+      deviceType: document.getElementById('cfg-device-type').value,
+      contentType: document.getElementById('cfg-content-type').value,
+      gender: document.getElementById('cfg-gender').value,
+      age: document.getElementById('cfg-age').value,
+      title: document.getElementById('cfg-title').value,
+      transId: document.getElementById('cfg-transid').value,
+      segments: document.getElementById('cfg-segments').value,
+      category: '1, 2', keyword: '1, 2', userId: 'test', adPendingTime: '', userImpressionLimit: '',
+      manufacturer: '', model: '', osName: '', osVersion: '',
+      partnerSkipOffset: 7, vastLoadTimeout: 5, mediaLoadTimeout: 10,
+      bufferingVideoTimeout: 10, alwaysCustomSkip: true, isAutoRequestFocus: false,
+      bitrate: 1024, skipText: '`Bỏ qua sau ${countdown}s`',
+      skippableText: '`Bỏ qua quảng cáo`', nonSkippableText: '`Quảng cáo kết thúc ${countdown}s`',
+      isUsePartnerSkipButton: true
+    };
+  }
+
+  function initSdk() {
+    if (!window.WI) {
+      setSdkState('Error');
+      return;
+    }
+    var cfg = buildConfig();
+    setSdkState('Init…');
+    try {
+      wiiSdk = new WI.InstreamSdk(cfg);
+      wiiSdk.start().then(function () {
+        setSdkState('Ready');
+      }).catch(function (err) {
+        setSdkState('Error');
+      });
+      if (typeof wiiSdk.setDuration === 'function' && !isNaN(video.duration)) {
+        wiiSdk.setDuration(video.duration);
+      }
+    } catch (err) {
+      setSdkState('Error');
+    }
+  }
+
+  // Events
+  window.addEventListener('message', function (e) {
+    if (!e.data || !e.data.type) return;
+    var type = e.data.type;
+    if (type.indexOf('WII_') === 0) return;
+
+    if (type === 'PAUSE_CONTENT') {
+      if (!video.paused) video.pause();
+      adsContainer.classList.add('active');
+      adBadge.classList.add('show');
+      if (wiiSdk && typeof wiiSdk.playAd === 'function') wiiSdk.playAd(video.muted);
+      return;
+    }
+    if (type === 'START') {
+      isAdPlaying = true;
+      setAdState('Playing');
+      return;
+    }
+    if (type === 'IMPRESSION') {
+      return;
+    }
+    if (type === 'CLICK') {
+      return;
+    }
+    if (type === 'COMPLETE') {
+      setAdState('Complete');
+      return;
+    }
+    if (type === 'SKIPPED') {
+      setAdState('Skipped');
+      return;
+    }
+    if (type === 'ERROR') {
+      setAdState('Error');
+      return;
+    }
+    if (type === 'AD_PROGRESS') {
+      var cur = e.data.currentTime || 0, dur = e.data.duration || 0;
+      document.getElementById('pill-ad-val').textContent = 'Playing ' + cur.toFixed(0) + '/' + dur.toFixed(0) + 's';
+      return;
+    }
+    if (type === 'ALL_ADS_COMPLETED') {
+      isAdPlaying = false;
+      breaksPlayed++;
+      document.getElementById('footer-breaks-played').textContent = breaksPlayed;
+      document.getElementById('pill-breaks-val').textContent = breaksPlayed;
+      setAdState('Done');
+      adsContainer.classList.remove('active');
+      adBadge.classList.remove('show');
+      if (video.paused) video.play().catch(function () {
+      });
+      return;
+    }
+    if (type === 'ADS_EMPTY') {
+      setAdState('Empty');
+      return;
+    }
+  });
+
+  // Buttons
+  document.getElementById('btn-load').addEventListener('click', function () {
+    var newUrl = document.getElementById('cfg-video-url').value.trim();
+    if (newUrl && video.currentSrc !== newUrl) {
+      video.src = newUrl;
+      video.load();
+    }
+    if (wiiSdk) {
+      wiiSdk.destroy();
+      wiiSdk = null;
+      adsInitialized = false;
+    }
+    setSdkState('Init…');
+    initSdk();
+    adsInitialized = true;
+    if (video.paused) video.play().catch(function () {
+    });
+  });
+  document.getElementById('btn-destroy').addEventListener('click', function () {
+    if (!wiiSdk) return;
+    wiiSdk.destroy();
+    wiiSdk = null;
+    adsInitialized = false;
+    isAdPlaying = false;
+    adsContainer.classList.remove('active');
+    adBadge.classList.remove('show');
+    setSdkState('Destroyed');
+    setAdState('—');
+  });
+  document.getElementById('btn-playadnow').addEventListener('click', function () {
+    if (!wiiSdk || typeof wiiSdk.playAd !== 'function') return;
+    wiiSdk.playAd(video.muted);
+  });
+  document.getElementById('btn-skip').addEventListener('click', function () {
+    if (!wiiSdk || typeof wiiSdk.skip !== 'function') return;
+    wiiSdk.skip();
+  });
+  document.getElementById('btn-seek-mid').addEventListener('click', function () {
+    if (isNaN(video.duration)) return;
+    var mid = video.duration * 0.5;
+    video.currentTime = mid;
+  });
+</script>
+</body>
+</html>

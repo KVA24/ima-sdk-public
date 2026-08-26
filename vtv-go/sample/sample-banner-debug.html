@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banner SDK Debug</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h2::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background: #667eea;
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all .2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, .1);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .5px;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, .4);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-danger {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #ee5a52;
+    }
+
+    .btn-success {
+      background: #51cf66;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #40c057;
+    }
+
+    .ad-preview {
+      width: 100%;
+      height: 300px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      color: #999;
+      font-size: 14px;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ad-preview.active {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .multi-banner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .banner-test-item {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+    }
+
+    .banner-test-item h3 {
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 15px;
+    }
+
+    .banner-test-item .ad-preview {
+      height: 220px;
+    }
+
+    .report-result {
+      min-height: 20px;
+      margin-top: 10px;
+      color: #555;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .5;
+    }
+
+    @media (max-width: 768px) {
+      .multi-banner-grid,
+      .form-grid,
+      .video-player-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 480px;
+    }
+
+    .video-player-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .video-player-item {
+      min-width: 0;
+    }
+
+    .video-player-item h3 {
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 15px;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .video-ad-slot {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 780px;
+      max-width: calc(100% - 32px);
+      height: 120px;
+      pointer-events: none;
+      z-index: 10;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .video-ad-slot.active {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .video-ad-slot.center {
+      top: 50%;
+      bottom: auto;
+      transform: translate(-50%, -50%);
+    }
+
+    .video-ad-slot.square-right {
+      top: 50%;
+      right: 24px;
+      bottom: auto;
+      left: auto;
+      width: 180px;
+      height: 180px;
+      transform: translateY(-50%);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    .status-badge.ready {
+      background: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    .status-badge.loading {
+      background: #fff9c4;
+      color: #f57f17;
+    }
+
+    .status-badge.error {
+      background: #ffcdd2;
+      color: #c62828;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🎯 Banner SDK Debug</h1>
+  </div>
+  <div class="main-grid">
+    <div>
+      <div class="card" style="margin-bottom: 20px;">
+        <h2>Configuration</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Stream ID</label>
+            <input type="text" id="streamId" placeholder="e.g., 123456" value="">
+          </div>
+          <div class="form-group">
+            <label>Channel ID</label>
+            <input type="text" id="channelId" placeholder="e.g., 123456" value="">
+          </div>
+          <div class="form-group">
+            <label>Position ID</label>
+            <input type="text" id="positionId" placeholder="e.g., HOME_1" value="HOME_1">
+          </div>
+          <div class="form-group">
+            <label>Position ID - Banner A</label>
+            <input type="text" id="positionIdA" placeholder="e.g., HOME_1" value="HOME_1">
+          </div>
+          <div class="form-group">
+            <label>Position ID - Banner B</label>
+            <input type="text" id="positionIdB" placeholder="e.g., HOME_3" value="HOME_3">
+          </div>
+          <div class="form-group">
+            <label>Banner Type</label>
+            <select id="bannerType">
+              <option value="HOMEPAGE_LARGE_BANNER">HOMEPAGE_LARGE_BANNER</option>
+              <option value="SUBPAGE_BANNER">SUBPAGE_BANNER</option>
+              <option value="PAUSE_BANNER">PAUSE_BANNER</option>
+            </select>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" id="btnInit">Initialize SDK</button>
+          <button class="btn-secondary" id="btnTestWelcome">Test Welcome</button>
+          <div id="sdkStatus" class="status-badge loading"
+               style="display: flex; align-items: center; justify-content: center; flex: 1;">Not initialized
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h2>Display Banner</h2>
+        <div class="ad-preview" id="adPreview">
+          <span>Ad will appear here</span>
+        </div>
+        <div class="button-group" style="margin-top: 16px;">
+          <button class="btn-success" id="btnStartDisplay">Start Display</button>
+          <button class="btn-danger" id="btnDismissDisplay">Dismiss</button>
+          <button class="btn-secondary" id="btnTestReport">Test Report</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <h2>Multi-banner external report test</h2>
+        <div class="multi-banner-grid">
+          <section class="banner-test-item" aria-labelledby="bannerATitle">
+            <h3 id="bannerATitle">Banner A · <code>adPreviewA</code></h3>
+            <div class="ad-preview" id="adPreviewA">
+              <span>Banner A will appear here</span>
+            </div>
+            <div class="button-group" style="margin-top: 12px;">
+              <button class="btn-secondary" id="btnReportA" disabled>Report Banner A</button>
+            </div>
+            <div class="report-result" id="reportResultA" role="status" aria-live="polite">Chưa có quảng cáo để report.</div>
+          </section>
+
+          <section class="banner-test-item" aria-labelledby="bannerBTitle">
+            <h3 id="bannerBTitle">Banner B · <code>adPreviewB</code></h3>
+            <div class="ad-preview" id="adPreviewB">
+              <span>Banner B will appear here</span>
+            </div>
+            <div class="button-group" style="margin-top: 12px;">
+              <button class="btn-secondary" id="btnReportB" disabled>Report Banner B</button>
+            </div>
+            <div class="report-result" id="reportResultB" role="status" aria-live="polite">Chưa có quảng cáo để report.</div>
+          </section>
+        </div>
+        <div class="button-group" style="margin-top: 16px;">
+          <button class="btn-success" id="btnStartDisplays">Start Both Banners</button>
+          <button class="btn-danger" id="btnDismissDisplays">Dismiss Both</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Video with Pause Banner</h2>
+        <div class="video-player-grid">
+          <section class="video-player-item" aria-labelledby="videoBottomTitle">
+            <h3 id="videoBottomTitle">Bottom center · <code>videoAdSlot</code></h3>
+            <div class="video-container">
+              <video id="videoDemoMain" controls>
+                <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
+              </video>
+              <div class="video-ad-slot" id="videoAdSlot"></div>
+            </div>
+            <div class="button-group" style="margin-top: 16px;">
+              <button class="btn-secondary" id="btnPlayVideo">Play</button>
+              <button class="btn-secondary" id="btnPauseVideo">Pause</button>
+            </div>
+          </section>
+
+          <section class="video-player-item" aria-labelledby="videoCenterTitle">
+            <h3 id="videoCenterTitle">Center · <code>videoAdSlotCenter</code></h3>
+            <div class="video-container">
+              <video id="videoDemoCenter" controls>
+                <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
+              </video>
+              <div class="video-ad-slot center" id="videoAdSlotCenter"></div>
+            </div>
+            <div class="button-group" style="margin-top: 16px;">
+              <button class="btn-secondary" id="btnPlayVideoCenter">Play</button>
+              <button class="btn-secondary" id="btnPauseVideoCenter">Pause</button>
+            </div>
+          </section>
+
+          <section class="video-player-item" aria-labelledby="videoSquareRightTitle">
+            <h3 id="videoSquareRightTitle">Square right · <code>videoAdSlotSquareRight</code></h3>
+            <div class="video-container">
+              <video id="videoDemoSquareRight" controls>
+                <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
+              </video>
+              <div class="video-ad-slot square-right" id="videoAdSlotSquareRight"></div>
+            </div>
+            <div class="button-group" style="margin-top: 16px;">
+              <button class="btn-secondary" id="btnPlayVideoSquareRight">Play</button>
+              <button class="btn-secondary" id="btnPauseVideoSquareRight">Pause</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://ima-sdk-public.pages.dev/vtv-go/1.0.0/banner-ima.js"></script>
+<script>
+  'use strict';
+  var sdk = null, welcomeSdk = null;
+  var statusEl = document.getElementById('sdkStatus');
+  var reportSlots = {
+    adPreviewA: {
+      button: document.getElementById('btnReportA'),
+      result: document.getElementById('reportResultA'),
+      adId: null,
+      pendingAdId: null
+    },
+    adPreviewB: {
+      button: document.getElementById('btnReportB'),
+      result: document.getElementById('reportResultB'),
+      adId: null,
+      pendingAdId: null
+    }
+  };
+
+  function updateStatus(status) {
+    statusEl.className = 'status-badge ' + status;
+    statusEl.textContent = status === 'ready' ? '✓ SDK Ready' :
+      status === 'loading' ? '⏳ Loading...' : '✗ Error';
+  }
+
+  function resetReportSlot(domId, message) {
+    var slot = reportSlots[domId];
+    if (!slot) return;
+    slot.adId = null;
+    slot.pendingAdId = null;
+    slot.button.disabled = true;
+    slot.result.textContent = message || 'Chưa có quảng cáo để report.';
+  }
+
+  function enableReportSlot(domId, ad) {
+    var slot = reportSlots[domId];
+    if (!slot || !ad) return;
+    slot.adId = ad.id || '';
+    slot.pendingAdId = null;
+    slot.button.disabled = false;
+    slot.result.textContent = 'Ready · expected adId: ' + (slot.adId || '(empty)');
+  }
+
+  function submitExternalReport(domId) {
+    var slot = reportSlots[domId];
+    if (!sdk || !slot || !slot.adId) return;
+
+    slot.pendingAdId = slot.adId;
+    slot.button.disabled = true;
+    slot.result.textContent = 'Sending · domId: ' + domId + ' · expected adId: ' + slot.pendingAdId;
+
+    sdk.submitReport(domId, ['MISLEADING'], function (status) {
+      if (status === 'ERROR') {
+        slot.result.textContent = 'ERROR · report request failed for ' + domId;
+        slot.button.disabled = !slot.adId;
+        slot.pendingAdId = null;
+      }
+    });
+  }
+
+  function attachEvents(sdkInstance) {
+    if (!sdkInstance) return;
+    var events = ['start', 'loaded', 'rendered', 'skip', 'click', 'dismiss', 'destroy', 'error', 'report_submitted', 'report_failed'];
+    events.forEach(function (event) {
+      sdkInstance.on(event, function (data) {
+        console.log('SDK Event:', event, data);
+
+        var domId = data && data.domId;
+        if (domId === 'adPreview') {
+          if (event === 'rendered') {
+            document.getElementById('adPreview').classList.add('active');
+          } else if (event === 'skip' || event === 'dismiss') {
+            document.getElementById('adPreview').classList.remove('active');
+          }
+        }
+        if (reportSlots[domId]) {
+          if (event === 'start') {
+            document.getElementById(domId).classList.remove('active');
+            resetReportSlot(domId, 'Loading banner...');
+          } else if (event === 'rendered' && data.ad) {
+            document.getElementById(domId).classList.add('active');
+            enableReportSlot(domId, data.ad);
+          } else if (event === 'skip' || event === 'dismiss' || event === 'error') {
+            document.getElementById(domId).classList.remove('active');
+            resetReportSlot(domId);
+          }
+        }
+        if (domId && document.getElementById(domId) && document.getElementById(domId).classList.contains('video-ad-slot')) {
+          if (event === 'rendered') {
+            document.getElementById(domId).classList.add('active');
+          } else if (event === 'skip' || event === 'dismiss') {
+            document.getElementById(domId).classList.remove('active');
+          }
+        }
+
+        // Handle report events
+        if (event === 'report_submitted') {
+          console.log('Report submitted event:', data);
+          var reportSlot = reportSlots[domId];
+          if (reportSlot) {
+            var isCorrectAd = reportSlot.pendingAdId === data.adId;
+            reportSlot.result.textContent = (isCorrectAd ? 'PASS' : 'FAIL') +
+              ' · domId: ' + domId +
+              ' · expected adId: ' + reportSlot.pendingAdId +
+              ' · submitted adId: ' + data.adId;
+            reportSlot.pendingAdId = null;
+            reportSlot.button.disabled = !reportSlot.adId;
+          }
+        } else if (event === 'report_failed') {
+          console.error('Report failed event:', data);
+        }
+      });
+    });
+  }
+
+  document.getElementById('btnInit').addEventListener('click', function () {
+    var config = {
+      streamId: document.getElementById('streamId').value || '',
+      channelId: document.getElementById('channelId').value || ''
+    };
+    try {
+      sdk = new AdSDK({
+        env: AdSDK.ENV.SANDBOX,
+        type: AdSDK.TYPE.DISPLAY,
+        debug: true,
+        tenantId: 14,
+        streamId: config.streamId,
+        channelId: config.channelId,
+        title: "Banner Debug",
+        transId: "debug-" + Date.now(),
+        category: "1, 2",
+        keyword: "test",
+        age: "25",
+        gender: AdSDK.GENDER.MALE,
+        userId: "banner-debug-user",
+        adPendingTime: '',
+        userImpressionLimit: '',
+        isUsePartnerSkipButton: true
+      });
+
+      welcomeSdk = new AdSDK({
+        env: AdSDK.ENV.SANDBOX,
+        type: AdSDK.TYPE.WELCOME,
+        debug: true,
+        tenantId: 14,
+        streamId: config.streamId,
+        channelId: config.channelId,
+        title: "Banner Debug",
+        transId: "debug-welcome-" + Date.now(),
+        category: "1, 2",
+        keyword: "test",
+        age: "25",
+        gender: AdSDK.GENDER.MALE,
+        userId: "welcome-debug-user",
+        adPendingTime: '',
+        userImpressionLimit: '',
+        isUsePartnerSkipButton: true
+      });
+
+      attachEvents(sdk);
+      attachEvents(welcomeSdk);
+      updateStatus('ready');
+    } catch (err) {
+      updateStatus('error');
+    }
+  });
+
+  document.getElementById('btnTestWelcome').addEventListener('click', function () {
+    if (!welcomeSdk) return;
+    welcomeSdk.start(null, null, null, function (result) {
+    });
+  });
+
+  document.getElementById('btnStartDisplay').addEventListener('click', function () {
+    if (!sdk) return;
+    var positionId = document.getElementById('positionId').value;
+    var bannerType = document.getElementById('bannerType').value;
+    sdk.start('adPreview', 'DISPLAY', bannerType, positionId, function (result) {
+    });
+  });
+
+  document.getElementById('btnDismissDisplay').addEventListener('click', function () {
+    if (!sdk) return;
+    sdk.dismiss('adPreview');
+  });
+
+  document.getElementById('btnTestReport').addEventListener('click', function () {
+    if (!sdk) {
+      console.log('SDK not initialized');
+      alert('Please initialize SDK first');
+      return;
+    }
+
+    var testReasons = ['RESTRICTED_PRODUCT', 'MISLEADING'];
+    console.log('Testing submitReport with reasons:', testReasons);
+
+    sdk.submitReport('adPreview', testReasons, function (status) {
+      console.log('submitReport callback - status:', status);
+      if (status === 'SUCCESS') {
+        alert('Report submitted successfully!');
+      } else {
+        alert('Report submission failed!');
+      }
+    });
+  });
+
+  document.getElementById('btnStartDisplays').addEventListener('click', function () {
+    if (!sdk) return;
+    var positionIdA = document.getElementById('positionIdA').value;
+    var positionIdB = document.getElementById('positionIdB').value;
+    var bannerType = document.getElementById('bannerType').value;
+    sdk.start('adPreviewA', 'DISPLAY', bannerType, positionIdA, function (result) {
+      console.log('Banner A callback:', result);
+    });
+    sdk.start('adPreviewB', 'DISPLAY', bannerType, positionIdB, function (result) {
+      console.log('Banner B callback:', result);
+    });
+  });
+
+  document.getElementById('btnDismissDisplays').addEventListener('click', function () {
+    if (!sdk) return;
+    sdk.dismiss('adPreviewA');
+    sdk.dismiss('adPreviewB');
+  });
+
+  document.getElementById('btnReportA').addEventListener('click', function () {
+    submitExternalReport('adPreviewA');
+  });
+
+  document.getElementById('btnReportB').addEventListener('click', function () {
+    submitExternalReport('adPreviewB');
+  });
+
+  function setupPauseBannerVideo(videoId, slotId, playButtonId, pauseButtonId) {
+    var video = document.getElementById(videoId);
+    var isSeeking = false;
+    var pauseTimeout = null;
+
+    document.getElementById(playButtonId).addEventListener('click', function () {
+      video.play();
+    });
+
+    document.getElementById(pauseButtonId).addEventListener('click', function () {
+      video.pause();
+    });
+
+    video.addEventListener('seeking', function () {
+      isSeeking = true;
+    });
+    video.addEventListener('seeked', function () {
+      setTimeout(function () {
+        isSeeking = false;
+      }, 100);
+    });
+
+    video.addEventListener('pause', function () {
+      if (isSeeking) return;
+      clearTimeout(pauseTimeout);
+      pauseTimeout = setTimeout(function () {
+        if (!video.paused || isSeeking) return;
+        if (!sdk) return;
+        sdk.start(slotId, 'OVERLAY', 'PAUSE_BANNER', null, function (result) {
+        });
+      }, 150);
+    });
+
+    video.addEventListener('play', function () {
+      if (!sdk) return;
+      sdk.dismiss(slotId);
+    });
+
+    video.addEventListener('ended', function () {
+      if (!sdk) return;
+      sdk.dismiss(slotId);
+    });
+  }
+
+  setupPauseBannerVideo('videoDemoMain', 'videoAdSlot', 'btnPlayVideo', 'btnPauseVideo');
+  setupPauseBannerVideo('videoDemoCenter', 'videoAdSlotCenter', 'btnPlayVideoCenter', 'btnPauseVideoCenter');
+  setupPauseBannerVideo('videoDemoSquareRight', 'videoAdSlotSquareRight', 'btnPlayVideoSquareRight', 'btnPauseVideoSquareRight');
+
+  window.addEventListener('message', function (event) {
+    if (!event.data || !event.data.type) return;
+    var type = event.data.type;
+    if (type === 'REPORT_SUBMITTED') {
+      console.log('Report submitted', event.data);
+    } else if (type === 'REPORT_FAILED') {
+      console.log('Report failed', event.data);
+    }
+  });
+</script>
+</body>
+</html>
