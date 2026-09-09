@@ -72,6 +72,8 @@
 
 /*! ../banner-ima/ReportFunction */
 
+/*! ../config/domains */
+
 /*! ../internals/a-callable */
 
 /*! ../internals/a-constructor */
@@ -1619,6 +1621,10 @@
 /*!******************************!*\
   !*** ./src/welcome/token.js ***!
   \******************************/
+
+/*!*******************************!*\
+  !*** ./src/config/domains.js ***!
+  \*******************************/
 
 /*!********************************!*\
   !*** ./src/polyfill/legacy.js ***!
