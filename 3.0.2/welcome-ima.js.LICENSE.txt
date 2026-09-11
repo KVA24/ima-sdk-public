@@ -20,8 +20,6 @@
  * Available under MIT license
  */
 
-/*! .. */
-
 /*! ../../actual/array/includes */
 
 /*! ../../actual/object/assign */
@@ -61,6 +59,8 @@
 /*! ../../modules/es.promise.finally */
 
 /*! ../../modules/es.string.includes */
+
+/*! ../../shared/AdsLogger.js */
 
 /*! ../../stable/array/includes */
 
@@ -1330,6 +1330,8 @@
 
 /*! ./BannerWelcomeManager */
 
+/*! ./ads/AdsLogger */
+
 /*! ./index */
 
 /*! ./network */
@@ -1634,6 +1636,10 @@
   !*** ./node_modules/md5/md5.js ***!
   \*********************************/
 
+/*!*********************************!*\
+  !*** ./src/shared/AdsLogger.js ***!
+  \*********************************/
+
 /*!**********************************!*\
   !*** ./src/welcome/sdk/index.js ***!
   \**********************************/
@@ -1645,6 +1651,10 @@
 /*!*************************************!*\
   !*** ./node_modules/crypt/crypt.js ***!
   \*************************************/
+
+/*!**************************************!*\
+  !*** ./src/welcome/ads/AdsLogger.js ***!
+  \**************************************/
 
 /*!****************************************!*\
   !*** ./src/welcome/network/network.js ***!
