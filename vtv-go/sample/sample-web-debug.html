@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wiinvent web-ima.js – Debug</title>
+  <title>Wiinvent SDK (vtv-go) – Web Instream Debug</title>
   <style>
     :root {
       --bg: #0f1117;
@@ -308,7 +308,7 @@
 </head>
 <body>
 <header>
-  <h1>🎯 Wiinvent — web-ima.js Debug</h1>
+  <h1>🎯 Wiinvent SDK — Web Instream Debug</h1>
   <span style="margin-left:auto">
             <span id="sdk-status-dot"></span>
             <span id="sdk-status-text">Init</span>
@@ -388,7 +388,7 @@
   <span><span id="sdk-status-dot2"></span> SDK: <span id="footer-sdk">—</span></span>
   <span>Breaks: <b id="footer-breaks-played">0</b></span>
 </footer>
-<script src="https://ima-sdk-public.pages.dev/vtv-go/1.0.0/web-ima.js"></script>
+<script src="https://ima-sdk-public.pages.dev/vtv-go/1.1.0/wiinvent-sdk.js"></script>
 <script>
   'use strict';
   var wiiSdk = null, adsInitialized = false, isAdPlaying = false, breaksPlayed = 0;
@@ -480,7 +480,7 @@
     return {
       domId: 'ads-container', liveTv: false,
       env: document.getElementById('cfg-env').value,
-      flatform: document.getElementById('cfg-platform').value,
+      platform: document.getElementById('cfg-platform').value,
       tenantId: parseInt(document.getElementById('cfg-tenant').value, 10),
       channelId: document.getElementById('cfg-channel').value,
       streamId: document.getElementById('cfg-stream').value,

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome Screen Demo (No Video)</title>
+  <title>Wiinvent SDK (vtv-go) – Welcome Debug</title>
 
   <style>
     :root{
@@ -398,7 +398,7 @@
     <button id="btnSubmitReport" class="btn" type="button" tabindex="5">⚑ submitReport()</button>
   </div>
 
-  <script src="https://ima-sdk-public.pages.dev/vtv-go/1.0.0/welcome-ima.js"></script>
+  <script src="https://ima-sdk-public.pages.dev/vtv-go/1.1.0/wiinvent-sdk.js"></script>
   <script>
   // ES5 helper
   function $(id) { return document.getElementById(id); }
@@ -592,9 +592,9 @@
 
     // Init SDK
     try {
-      if (!window.WiiSDKWelcomeTVC || !window.WiiSDKWelcomeTVC.WelcomeSdk) {
+      if (!window.WI || !WI.WelcomeSdk) {
         setText('sdkBadge', 'SDK: missing');
-        log('[SDK] WelcomeSdk not found. Check ./js/wii-sdk-welcome-tvc.js');
+        log('[SDK] WelcomeSdk not found. Check wiinvent-sdk.js');
 
         // mock START
         setTimeout(function () {
@@ -604,21 +604,21 @@
         return;
       }
 
-      wiiSdkWelcome = new window.WiiSDKWelcomeTVC.WelcomeSdk({
-        env: window.WiiSDKWelcomeTVC.Environment.SANDBOX,
+      wiiSdkWelcome = new WI.WelcomeSdk({
+        env: WI.Environment.SANDBOX,
         tenantId: 2,
-        deviceType: window.WiiSDKWelcomeTVC.DeviceType.TV,
+        deviceType: WI.DeviceType.TV,
         domId: 'wiinvent_ads_container_id',
         channelId: '',
         streamId: '1509',
         adId: '1999',
-        contentType: window.WiiSDKWelcomeTVC.ContentType.VIDEO,
+        contentType: WI.ContentType.VIDEO,
         title: 'noi dung 1',
         transId: '111',
         category: '1, 2',
         keyword: '1, 2',
         age: '20',
-        gender: window.WiiSDKWelcomeTVC.Gender.MALE,
+        gender: WI.Gender.MALE,
         userId: 'test',
         adPendingTime: '',
         userImpressionLimit: '',

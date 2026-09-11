@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banner SDK Debug</title>
+  <title>Wiinvent SDK (vtv-go) – Banner Debug</title>
   <style>
     * {
       margin: 0;
@@ -291,7 +291,7 @@
 <body>
 <div class="container">
   <div class="header">
-    <h1>🎯 Banner SDK Debug</h1>
+    <h1>🎯 Wiinvent SDK — Banner Debug</h1>
   </div>
   <div class="main-grid">
     <div>
@@ -399,7 +399,7 @@
   </div>
 </div>
 
-<script src="https://ima-sdk-public.pages.dev/vtv-go/1.0.0/banner-ima.js"></script>
+<script src="https://ima-sdk-public.pages.dev/vtv-go/1.1.0/wiinvent-sdk.js"></script>
 <script>
   'use strict';
   var sdk = null, welcomeSdk = null;
@@ -521,9 +521,9 @@
       channelId: document.getElementById('channelId').value || ''
     };
     try {
-      sdk = new AdSDK({
-        env: AdSDK.ENV.SANDBOX,
-        type: AdSDK.TYPE.DISPLAY,
+      sdk = new WI.BannerSdk({
+        env: WI.BannerSdk.ENV.SANDBOX,
+        type: WI.BannerSdk.TYPE.DISPLAY,
         debug: true,
         tenantId: 2,
         streamId: config.streamId,
@@ -533,16 +533,16 @@
         category: "1, 2",
         keyword: "test",
         age: "25",
-        gender: AdSDK.GENDER.MALE,
+        gender: WI.BannerSdk.GENDER.MALE,
         userId: "banner-debug-user",
         adPendingTime: '',
         userImpressionLimit: '',
         isUsePartnerSkipButton: true
       });
 
-      welcomeSdk = new AdSDK({
-        env: AdSDK.ENV.SANDBOX,
-        type: AdSDK.TYPE.WELCOME,
+      welcomeSdk = new WI.BannerSdk({
+        env: WI.BannerSdk.ENV.SANDBOX,
+        type: WI.BannerSdk.TYPE.WELCOME,
         debug: true,
         tenantId: 2,
         streamId: config.streamId,
@@ -552,7 +552,7 @@
         category: "1, 2",
         keyword: "test",
         age: "25",
-        gender: AdSDK.GENDER.MALE,
+        gender: WI.BannerSdk.GENDER.MALE,
         userId: "welcome-debug-user",
         adPendingTime: '',
         userImpressionLimit: '',
