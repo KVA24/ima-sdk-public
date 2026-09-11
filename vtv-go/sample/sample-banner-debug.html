@@ -218,8 +218,7 @@
 
     @media (max-width: 768px) {
       .multi-banner-grid,
-      .form-grid,
-      .video-player-grid {
+      .form-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -231,22 +230,6 @@
       border-radius: 8px;
       overflow: hidden;
       height: 480px;
-    }
-
-    .video-player-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .video-player-item {
-      min-width: 0;
-    }
-
-    .video-player-item h3 {
-      margin-bottom: 12px;
-      color: #333;
-      font-size: 15px;
     }
 
     video {
@@ -278,22 +261,6 @@
     .video-ad-slot.active {
       pointer-events: auto;
       opacity: 1;
-    }
-
-    .video-ad-slot.center {
-      top: 50%;
-      bottom: auto;
-      transform: translate(-50%, -50%);
-    }
-
-    .video-ad-slot.square-right {
-      top: 50%;
-      right: 24px;
-      bottom: auto;
-      left: auto;
-      width: 180px;
-      height: 180px;
-      transform: translateY(-50%);
     }
 
     .status-badge {
@@ -414,48 +381,18 @@
 
       <div class="card">
         <h2>Video with Pause Banner</h2>
-        <div class="video-player-grid">
-          <section class="video-player-item" aria-labelledby="videoBottomTitle">
-            <h3 id="videoBottomTitle">Bottom center · <code>videoAdSlot</code></h3>
-            <div class="video-container">
-              <video id="videoDemoMain" controls>
-                <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
-              </video>
-              <div class="video-ad-slot" id="videoAdSlot"></div>
-            </div>
-            <div class="button-group" style="margin-top: 16px;">
-              <button class="btn-secondary" id="btnPlayVideo">Play</button>
-              <button class="btn-secondary" id="btnPauseVideo">Pause</button>
-            </div>
-          </section>
-
-          <section class="video-player-item" aria-labelledby="videoCenterTitle">
-            <h3 id="videoCenterTitle">Center · <code>videoAdSlotCenter</code></h3>
-            <div class="video-container">
-              <video id="videoDemoCenter" controls>
-                <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
-              </video>
-              <div class="video-ad-slot center" id="videoAdSlotCenter"></div>
-            </div>
-            <div class="button-group" style="margin-top: 16px;">
-              <button class="btn-secondary" id="btnPlayVideoCenter">Play</button>
-              <button class="btn-secondary" id="btnPauseVideoCenter">Pause</button>
-            </div>
-          </section>
-
-          <section class="video-player-item" aria-labelledby="videoSquareRightTitle">
-            <h3 id="videoSquareRightTitle">Square right · <code>videoAdSlotSquareRight</code></h3>
-            <div class="video-container">
-              <video id="videoDemoSquareRight" controls>
-                <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
-              </video>
-              <div class="video-ad-slot square-right" id="videoAdSlotSquareRight"></div>
-            </div>
-            <div class="button-group" style="margin-top: 16px;">
-              <button class="btn-secondary" id="btnPlayVideoSquareRight">Play</button>
-              <button class="btn-secondary" id="btnPauseVideoSquareRight">Pause</button>
-            </div>
-          </section>
+        <div class="video-container">
+          <video id="videoDemoMain" controls>
+            <source src="https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4" type="video/mp4">
+          </video>
+          <div class="video-ad-slot" id="videoAdSlot"></div>
+        </div>
+        <div class="button-group" style="margin-top: 16px;">
+          <button class="btn-secondary" id="btnPlayVideo">Play</button>
+          <button class="btn-secondary" id="btnPauseVideo">Pause</button>
+        </div>
+        <div class="report-result" id="pauseSlotResult" role="status" aria-live="polite">
+          Pause video để hiển thị banner.
         </div>
       </div>
     </div>
@@ -725,6 +662,8 @@
         if (!video.paused || isSeeking) return;
         if (!sdk) return;
         sdk.start(slotId, 'OVERLAY', 'PAUSE_BANNER', null, function (result) {
+          document.getElementById('pauseSlotResult').textContent =
+            result.status + ' · slot: ' + (result.domId || '(none)');
         });
       }, 150);
     });
@@ -741,8 +680,6 @@
   }
 
   setupPauseBannerVideo('videoDemoMain', 'videoAdSlot', 'btnPlayVideo', 'btnPauseVideo');
-  setupPauseBannerVideo('videoDemoCenter', 'videoAdSlotCenter', 'btnPlayVideoCenter', 'btnPauseVideoCenter');
-  setupPauseBannerVideo('videoDemoSquareRight', 'videoAdSlotSquareRight', 'btnPlayVideoSquareRight', 'btnPauseVideoSquareRight');
 
   window.addEventListener('message', function (event) {
     if (!event.data || !event.data.type) return;
